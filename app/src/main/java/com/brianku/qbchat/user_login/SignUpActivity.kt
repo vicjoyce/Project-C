@@ -49,18 +49,14 @@ class SignUpActivity : AppCompatActivity() {
         progressBar(true)
         QBUsers.signUp(user).performAsync(object : QBEntityCallback<QBUser>{
             override fun onSuccess(p0: QBUser?, p1: Bundle?) {
-                // Sign up to User then Sign in to next activity
+                // Sign up new user in QB then Sign in to next activity
                 QBUsers.signIn(user).performAsync(object:QBEntityCallback<QBUser>{
                     override fun onSuccess(qbUser: QBUser?, p1: Bundle?) {
                         // obtain id from session
                         user.id = qbUser?.id
                         progressBar(false)
                         Toast.makeText(this@SignUpActivity,"Sign In Successfully",Toast.LENGTH_LONG).show()
-                        val intent = Intent(this@SignUpActivity,MainSectionActivity::class.java)
-                        intent.putExtra("user",user)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        finish()
+                        goToMainSectionActivity(user)
                     }
 
                     override fun onError(e: QBResponseException?) {
@@ -75,6 +71,14 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(this@SignUpActivity,"Sign In Failed: ${e?.message}",Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun goToMainSectionActivity(user:QBUser){
+        val intent = Intent(this@SignUpActivity,MainSectionActivity::class.java)
+        intent.putExtra("user",user)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 
     private fun progressBar(spin:Boolean){

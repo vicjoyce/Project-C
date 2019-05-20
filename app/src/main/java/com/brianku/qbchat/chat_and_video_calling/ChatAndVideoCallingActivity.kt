@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.ActionBar
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -35,16 +36,25 @@ import java.util.zip.Inflater
 
 class ChatAndVideoCallingActivity : AppCompatActivity() {
 
-    private var oppositeUser :QBUser? = null
-    private var existDialog:QBChatDialog? = null
+    // opponent is 1:1 user we message or video calling to him/her
+    private var opponent :QBUser? = null
+
+    // mainDialog is chat-room alike data model, it handles message send and retrieve from QBChat Server, it also could display user is typing status
+    private var mainDialog:QBChatDialog? = null
+
     private var messageAdapter:GroupAdapter<ViewHolder>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_and_video_calling)
-        oppositeUser = intent.getSerializableExtra("user") as? QBUser
-        existDialog = intent.getSerializableExtra("dialog") as? QBChatDialog
+
+        opponent = intent.getSerializableExtra("user") as? QBUser
+        mainDialog = intent.getSerializableExtra("dialog") as? QBChatDialog
+        val title = intent.getStringExtra("title")
+        supportActionBar?.title = title
+
         messageAdapter = GroupAdapter<ViewHolder>()
+        adapterInsertItemListener()
         chat_message_recyclerview.adapter = messageAdapter
 
         initChatDialogs()
@@ -53,22 +63,25 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
     }
 
     private fun initChatDialogs(){
-        // if connect to new user, create a dialog, otherwise use the exist one.
-        if(oppositeUser != null){
+        // if user select user from Inbox then create a dialog, otherwise we use exist main dialog to handle message.
+        if(opponent != null){
             createChatDialog()
         }else {
-            existDialogForChat(existDialog!!)
+            initDialogForChat(mainDialog!!)
         }
     }
 
     private fun createChatDialog(){
-        val dialog = DialogUtils.buildPrivateDialog(oppositeUser!!.id)
+        // we use the opponent id to create a new private 1:1 dialog to server is no there is no exist one in QB Chat server
+        val dialog = DialogUtils.buildPrivateDialog(opponent!!.id)
+
         QBRestChatService.createChatDialog(dialog).performAsync(object :QBEntityCallback<QBChatDialog>{
             override fun onSuccess(chatDialog: QBChatDialog?, p1: Bundle?) {
                 Toast.makeText(this@ChatAndVideoCallingActivity,"create dialog successfully",Toast.LENGTH_LONG).show()
-                existDialog = chatDialog
-                existDialog?.let{
-                    existDialogForChat(it)
+                mainDialog = chatDialog
+                mainDialog?.let{
+                    // when main dialog is created, we start to initialize main dialog(chat room)
+                    initDialogForChat(it)
                 }
             }
             override fun onError(p0: QBResponseException?) {
@@ -77,21 +90,24 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
         })
     }
 
-    private fun existDialogForChat(chatDialog:QBChatDialog){
+    private fun initDialogForChat(chatDialog:QBChatDialog){
+        // dialog initialize for chatting service
         chatDialog.initForChat(QBChatService.getInstance())
+        // when main dialog is initialized,retrieve QBInComingMessagesManager from QBChatService
+        // and register QBChatDialogMessageListener to listen for messages from chat dialogs
         val incomingMessage = QBChatService.getInstance().incomingMessagesManager
         incomingMessage.addDialogMessageListener(object:QBChatDialogMessageListener{
-            override fun processMessage(p0: String?, p1: QBChatMessage?, p2: Int?) {
-
-            }
+            override fun processMessage(p0: String?, p1: QBChatMessage?, p2: Int?) {}
             override fun processError(p0: String?, p1: QBChatException?, p2: QBChatMessage?, p3: Int?) {}
         })
 
+        // Add Message listener for chat dialog
         chatDialog.addMessageListener(object :QBChatDialogMessageListener{
             override fun processMessage(p0: String?, qbChatMessage: QBChatMessage?, p2: Int?) {
-
+                qbChatMessage?.let{
+                    showMessage(it)
+                }
             }
-
             override fun processError(p0: String?, p1: QBChatException?, p2: QBChatMessage?, p3: Int?) {}
         })
     }
@@ -100,18 +116,13 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
         val messageGetBuilder = QBMessageGetBuilder()
         messageGetBuilder.setLimit(500)
 
-        existDialog?.let{
+        mainDialog?.let{
             QBRestChatService.getDialogMessages(it,messageGetBuilder).performAsync(object :QBEntityCallback<ArrayList<QBChatMessage>>{
                 override fun onSuccess(qbChatMessages: ArrayList<QBChatMessage>?, p1: Bundle?) {
                     qbChatMessages?.forEach {
-                        if(it.senderId == InboxFragment.currentUser?.id){
-                            messageAdapter?.add(ChatToItem(it.body))
-                        }else{
-                            messageAdapter?.add(ChatFromItem(it.body))
-                        }
+                      showMessage(it)
                     }
                 }
-
                 override fun onError(p0: QBResponseException?) {
                 }
             })
@@ -133,13 +144,33 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
 
             // ChatDialog send message
             try {
-                existDialog?.sendMessage(chatMessage)
+                mainDialog?.sendMessage(chatMessage)
+                showMessage(chatMessage)
             }catch (e: SmackException.NotConnectedException){
                 e.printStackTrace()
             }
         }
     }
 
+    private fun adapterInsertItemListener(){
+        messageAdapter!!.registerAdapterDataObserver(
+            object : RecyclerView.AdapterDataObserver(){
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    chat_message_recyclerview.layoutManager!!.smoothScrollToPosition(chat_message_recyclerview,null,messageAdapter!!.itemCount)
+                }
+            }
+        )
+    }
+
+
+    private fun showMessage(chatMessage:QBChatMessage){
+        if(chatMessage.senderId == InboxFragment.currentUser?.id){
+            messageAdapter?.add(ChatToItem(chatMessage.body))
+        }else{
+            messageAdapter?.add(ChatFromItem(chatMessage.body))
+        }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return super.onOptionsItemSelected(item)

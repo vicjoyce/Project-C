@@ -27,7 +27,7 @@
             android:paddingRight="20dp"
             android:background="@drawable/selector_bg_edit_2"
             android:textCursorDrawable="@drawable/bg_input_cursor_2"
-
+            android:nextFocusDown="@+id/send_message"
 
             android:ems="10"
             android:id="@+id/chat_message_et"

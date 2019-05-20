@@ -22,6 +22,8 @@ import kotlinx.android.synthetic.main.activity_main_section.*
 class MainSectionActivity : AppCompatActivity() {
 
     companion object {
+
+        // save the login user data and  LoginScreenActivity will use MainSectionActivity.currentUser to pass back if user session is exist.
         var currentUser:QBUser? = null
     }
 
@@ -71,11 +73,8 @@ class MainSectionActivity : AppCompatActivity() {
                         })
                     }
                     Toast.makeText(this@MainSectionActivity,"Sign out successfully",Toast.LENGTH_LONG).show()
+                    backToLoginActivity()
 
-                    val intent = Intent(this@MainSectionActivity,LoginScreenActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
                 }
 
                 override fun onError(e: QBResponseException?) {
@@ -92,8 +91,10 @@ class MainSectionActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-
     private fun setUpIntentData(){
+
+            // container pass QBuser to fragment
+
             val user = intent.getSerializableExtra("user") as QBUser
             currentUser = user
             val arguments = Bundle()
@@ -107,6 +108,13 @@ class MainSectionActivity : AppCompatActivity() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragmentContainer,fragment)
         fragmentTransaction.commit()
+    }
+
+    private fun backToLoginActivity(){
+        val intent = Intent(this@MainSectionActivity,LoginScreenActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 
 }

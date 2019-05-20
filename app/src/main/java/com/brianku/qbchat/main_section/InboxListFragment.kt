@@ -40,7 +40,6 @@ class InboxFragment : Fragment() {
     private var onlineUserGroupAdapter: GroupAdapter<ViewHolder>? = null
     private  var historyDialogGroupAdapter: GroupAdapter<ViewHolder>? = null
     private lateinit var inboxProgressBar: ProgressBar
-
     private val qbChatService: QBChatService = QBChatService.getInstance()
 
     private val isLoggedIn: Boolean
@@ -48,6 +47,8 @@ class InboxFragment : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
+
+        // get QBUser from container and save it to Inbox current user
         val qbUser= arguments?.getSerializable("user") as? QBUser
         qbUser?.let{
             currentUser = it
@@ -72,27 +73,8 @@ class InboxFragment : Fragment() {
         progressBar(false)
         val onlineRecyclerView = view.findViewById<RecyclerView>(R.id.online_user_recyclerview)
         val historyRecyclerView = view.findViewById<RecyclerView>(R.id.history_user_recyclerview)
-
-        onlineUserGroupAdapter?.setOnItemClickListener {
-                item, view ->
-
-                var user = (item as OnlineUserItem).item
-                var intent = Intent(activity,ChatAndVideoCallingActivity::class.java)
-                intent.putExtra("user",user)
-                startActivity(intent)
-                clearGroupAdapter()
-        }
-
-        historyDialogGroupAdapter?.setOnItemClickListener {
-                item, view ->
-
-                var dialog = ( item as HistoryDialogItem).item
-                var intent = Intent(activity,ChatAndVideoCallingActivity::class.java)
-                intent.putExtra("dialog",dialog)
-                startActivity(intent)
-                clearGroupAdapter()
-        }
-
+        registerUserItemListenerForAdapter()
+        registerDialogItemListenerForAdapter()
         onlineRecyclerView.adapter = onlineUserGroupAdapter
         historyRecyclerView.adapter = historyDialogGroupAdapter
         return view
@@ -101,7 +83,7 @@ class InboxFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // reconnect and reload when get back from interrupt
+        // connect/reconnect and reload when get back from scratch and interrupt
           currentUser?.let{
               loginToChat(it)
           }
@@ -116,7 +98,7 @@ class InboxFragment : Fragment() {
 
     private fun loginToChat(user: QBUser) {
 
-        // connect to QBchart server if not login yet, otherwise load whole chatDialogs and users
+        // connect to QBchat server if not login yet, otherwise load whole chatDialogs and users
         if (!isLoggedIn) {
             progressBar(true)
             qbChatService.login(user, object : QBEntityCallback<Void> {
@@ -181,6 +163,33 @@ class InboxFragment : Fragment() {
             inboxProgressBar.visibility = ProgressBar.INVISIBLE
         }
     }
+
+    private fun registerUserItemListenerForAdapter(){
+        onlineUserGroupAdapter?.setOnItemClickListener {
+                item, view ->
+
+            val user = (item as OnlineUserItem).item
+            val intent = Intent(activity,ChatAndVideoCallingActivity::class.java)
+            intent.putExtra("user",user)
+            intent.putExtra("title",user.fullName)
+            startActivity(intent)
+            clearGroupAdapter()
+        }
+    }
+
+    private fun registerDialogItemListenerForAdapter(){
+        historyDialogGroupAdapter?.setOnItemClickListener {
+                item, view ->
+
+            val dialog = ( item as HistoryDialogItem).item
+            val intent = Intent(activity,ChatAndVideoCallingActivity::class.java)
+            intent.putExtra("dialog",dialog)
+            intent.putExtra("title",dialog.name)
+            startActivity(intent)
+            clearGroupAdapter()
+        }
+    }
+
 
     private fun clearGroupAdapter(){
         onlineUserGroupAdapter = null
