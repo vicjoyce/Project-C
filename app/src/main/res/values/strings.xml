@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">QB Chat</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="sign_up_u">
+        <u>Sign Up</u>
+    </string>
+    <string name="forgot_password_u">
+        <u>Forgot Passwords</u>
+    </string>
+    <string name="sign_in_u">
+        <u>Sign in</u>
+    </string>
+    <string name="create_account">Create Account</string>
+
+</resources>
+
+

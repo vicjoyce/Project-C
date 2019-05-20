@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".chat_and_video_calling.ChatAndVideoCallingActivity">
+
+    <Button
+            android:text="send"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/send_button_round"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="20dp"
+            android:id="@+id/send_message" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+            android:fontFamily="@font/lato_bold" android:textSize="10sp"/>
+    <EditText
+
+            android:layout_width="0dp"
+            android:translationZ="100dp"
+            android:layout_height="60dp"
+            android:inputType="textPersonName"
+            android:paddingLeft="20dp"
+            android:paddingStart="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/selector_bg_edit_2"
+            android:textCursorDrawable="@drawable/bg_input_cursor_2"
+
+
+            android:ems="10"
+            android:id="@+id/chat_message_et"
+            android:hint="發送訊息......"
+            android:textAlignment="viewStart"
+
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="16dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toStartOf="@+id/send_message"/>
+    <android.support.v7.widget.RecyclerView
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:id="@+id/chat_message_recyclerview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/chat_message_et"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"/>
+
+</android.support.constraint.ConstraintLayout>
