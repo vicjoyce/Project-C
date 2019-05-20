@@ -25,7 +25,7 @@ class MainSectionActivity : AppCompatActivity() {
         var currentUser:QBUser? = null
     }
 
-
+    // bottom navigation bar item selected listener
     private val mOnNavigationItemListIntent = BottomNavigationView.OnNavigationItemSelectedListener{
         when(it.itemId){
             R.id.inbox_list ->{
@@ -47,6 +47,7 @@ class MainSectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_section)
+        // setup custom action bar
         supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
         supportActionBar?.setCustomView(R.layout.abs_layout)
 
@@ -57,7 +58,7 @@ class MainSectionActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.logout) {
 
-            // proceed sign out, sign out from qbusers and destroy chat service
+            // proceed session sign out, chat service sign out
             QBUsers.signOut().performAsync(object:QBEntityCallback<Void>{
                 override fun onSuccess(p0: Void?, p1: Bundle?) {
                     val chatService = QBChatService.getInstance()
@@ -70,7 +71,10 @@ class MainSectionActivity : AppCompatActivity() {
                         })
                     }
                     Toast.makeText(this@MainSectionActivity,"Sign out successfully",Toast.LENGTH_LONG).show()
-                    startActivity(Intent(this@MainSectionActivity,LoginScreenActivity::class.java))
+
+                    val intent = Intent(this@MainSectionActivity,LoginScreenActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
                     finish()
                 }
 

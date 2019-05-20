@@ -11,6 +11,7 @@ import com.brianku.qbchat.main_section.MainSectionActivity
 import com.quickblox.auth.session.QBSessionManager
 import com.quickblox.auth.session.QBSessionParameters
 import com.quickblox.auth.session.QBSettings
+import com.quickblox.chat.QBChatService
 import com.quickblox.core.QBEntityCallback
 import com.quickblox.core.exception.QBResponseException
 import com.quickblox.users.QBUsers
@@ -29,7 +30,7 @@ class LoginScreenActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         if(QBSessionManager.getInstance().sessionParameters != null
-            && QBSessionManager.getInstance().sessionParameters.userId == MainSectionActivity.currentUser?.id
+            && QBChatService.getInstance().isLoggedIn
             && MainSectionActivity.currentUser != null){
             goToMainSectionWithUser(MainSectionActivity.currentUser!!)
         }
@@ -61,7 +62,8 @@ class LoginScreenActivity : AppCompatActivity() {
             override fun onSuccess(qbUser: QBUser?, p1: Bundle?) {
                 progressBar(false)
 
-                //obtain user.id, qbuser which passed into Onsucess doesn't have password, it can't be used to login directly.
+                // obtain user.id, qbuser which passed into Onsucess doesn't have password, it can't be used to login directly.
+                // we need user with login/email, id and password to login chat server
                 user.id = qbUser!!.id
                 Toast.makeText(this@LoginScreenActivity,"Login Successfully",Toast.LENGTH_LONG).show()
                 goToMainSectionWithUser(user)
@@ -92,6 +94,7 @@ class LoginScreenActivity : AppCompatActivity() {
     private fun goToMainSectionWithUser(user:QBUser){
         val intent = Intent(this@LoginScreenActivity,MainSectionActivity::class.java)
         intent.putExtra("user",user)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }

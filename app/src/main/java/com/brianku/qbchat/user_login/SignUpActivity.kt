@@ -58,6 +58,7 @@ class SignUpActivity : AppCompatActivity() {
                         Toast.makeText(this@SignUpActivity,"Sign In Successfully",Toast.LENGTH_LONG).show()
                         val intent = Intent(this@SignUpActivity,MainSectionActivity::class.java)
                         intent.putExtra("user",user)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                         finish()
                     }

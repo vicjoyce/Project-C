@@ -100,12 +100,15 @@ class InboxFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        // reconnect and reload when get back from interrupt
           currentUser?.let{
               loginToChat(it)
           }
         }
 
     private fun initChat() {
+        // initialize Chat Server
         QBSettings.getInstance().logLevel = LogLevel.DEBUG
         QBChatService.setDebugEnabled(true)
         QBChatService.setConfigurationBuilder(QBChatService.ConfigurationBuilder().apply { socketTimeout = 60 })
@@ -113,6 +116,7 @@ class InboxFragment : Fragment() {
 
     private fun loginToChat(user: QBUser) {
 
+        // connect to QBchart server if not login yet, otherwise load whole chatDialogs and users
         if (!isLoggedIn) {
             progressBar(true)
             qbChatService.login(user, object : QBEntityCallback<Void> {
@@ -133,6 +137,7 @@ class InboxFragment : Fragment() {
     }
 
     private fun loadChatDialogs() {
+        // requestBuilder to set parameter while fetching dialogs
         val requestBuilder = QBRequestGetBuilder()
         requestBuilder.limit = 100
 
@@ -140,6 +145,7 @@ class InboxFragment : Fragment() {
         QBRestChatService.getChatDialogs(null,requestBuilder).performAsync(object :QBEntityCallback<ArrayList<QBChatDialog>>{
             override fun onSuccess(dialogs: ArrayList<QBChatDialog>?, p1: Bundle?) {
                 dialogs?.forEach { historyDialogGroupAdapter?.add(HistoryDialogItem(it)) }
+                // after fetching dialogs, we start to fetching users
                 loadUsers()
             }
             override fun onError(e: QBResponseException?) {
@@ -149,7 +155,7 @@ class InboxFragment : Fragment() {
         })
     }
 
-    // fetch whole users from User model
+    // fetch whole users from server
     private fun loadUsers(){
             QBUsers.getUsers(null).performAsync(object : QBEntityCallback<ArrayList<QBUser>> {
                 override fun onSuccess(qbUsers: ArrayList<QBUser>, p1: Bundle?) {
