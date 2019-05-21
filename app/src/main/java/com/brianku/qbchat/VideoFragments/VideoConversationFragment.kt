@@ -12,6 +12,7 @@ import com.brianku.qbchat.R
 import com.quickblox.users.model.QBUser
 import com.quickblox.videochat.webrtc.AppRTCAudioManager
 import com.quickblox.videochat.webrtc.QBRTCSession
+import org.webrtc.CameraVideoCapturer
 
 
 class VideoConversationFragment : BaseToolBarFragment() {
@@ -20,6 +21,13 @@ class VideoConversationFragment : BaseToolBarFragment() {
 
     override val fragmentLayout: Int
         get() = R.layout.fragment_video_conversation
+
+    interface CallFragmentCallbackListener {
+        fun onHangUpCall()
+        fun onSwitchAudio()
+        fun onStartScreenSharing()
+        fun onSwitchCamera(cameraSwitchHandler: CameraVideoCapturer.CameraSwitchHandler)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
