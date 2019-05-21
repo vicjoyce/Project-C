@@ -4,14 +4,15 @@ package com.brianku.qbchat.main_section
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
+
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 
 import com.brianku.qbchat.R
 import com.brianku.qbchat.chat_and_video_calling.ChatRoomActivity
@@ -47,7 +48,7 @@ class InboxFragment : Fragment() {
     private val isLoggedIn: Boolean
         get() = QBChatService.getInstance().isLoggedIn
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         // get QBUser from container and save it to Inbox current user

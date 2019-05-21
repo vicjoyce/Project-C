@@ -52,4 +52,5 @@ dependencies {
     implementation 'androidx.fragment:fragment:1.0.0'
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.0.0"
+    implementation "androidx.viewpager:viewpager:1.0.0"
 }

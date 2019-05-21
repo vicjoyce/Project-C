@@ -153,7 +153,7 @@ class VideoCallingActivity : AppCompatActivity(),QBRTCClientSessionCallbacks,QBR
         Log.d("vic", "updatePreviewCallButtons")
         if (previewFrag != null) {
             Log.d("vic", "updateCallButtons")
-            previewFrag.updateCallButtons(show)
+//            previewFrag.updateCallButtons(show)
         }
     }
 

@@ -5,20 +5,18 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import androidx.fragment.app.Fragment
-
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-
+import androidx.fragment.app.Fragment
 import com.brianku.qbchat.R
 import com.quickblox.chat.QBChatService
-import java.lang.ref.WeakReference
 
+import java.lang.ref.WeakReference
 
 abstract class BaseToolBarFragment : Fragment() {
     private var TAG = BaseToolBarFragment::class.java.simpleName
@@ -42,7 +40,7 @@ abstract class BaseToolBarFragment : Fragment() {
 
     open fun initActionBar() {
         actionBar.title = String.format(QBChatService.getInstance().user.login)
-        actionBar.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context!!, R.color.grey_600)))
+        actionBar.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context!!, R.color.black_transparent_50)))
     }
 
 

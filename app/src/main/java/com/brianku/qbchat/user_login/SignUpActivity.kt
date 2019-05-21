@@ -1,10 +1,11 @@
 package com.brianku.qbchat.landing_screen.user_login.user_login
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+
 import android.os.Bundle
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.brianku.qbchat.R
 import com.brianku.qbchat.main_section.MainSectionActivity
 import com.quickblox.core.QBEntityCallback

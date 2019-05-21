@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".VideoFragments.PreviewCallFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/fragment_call"
+                style="@style/MatchParent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:id="@+id/camera_preview"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent" />
+
+    <include
+            android:id="@+id/element_set_video_buttons"
+            layout="@layout/view_action_buttons_conversation_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/padding_common" />
 
-</FrameLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/snackbar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+</RelativeLayout>

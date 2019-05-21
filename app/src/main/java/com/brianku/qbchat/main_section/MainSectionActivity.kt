@@ -1,16 +1,21 @@
 package com.brianku.qbchat.main_section
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
-import android.support.v7.app.ActionBar
+
+
+
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.ActionBar
+import androidx.fragment.app.Fragment
+
 import com.brianku.qbchat.R
 import com.brianku.qbchat.landing_screen.user_login.user_login.LoginScreenActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.quickblox.chat.QBChatService
 import com.quickblox.core.QBEntityCallback
 import com.quickblox.core.exception.QBResponseException
@@ -102,7 +107,7 @@ class MainSectionActivity : AppCompatActivity() {
             replaceFragment(fragment)
     }
 
-    private fun replaceFragment(fragment:Fragment){
+    private fun replaceFragment(fragment: Fragment){
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragmentContainer,fragment)
         fragmentTransaction.commit()
