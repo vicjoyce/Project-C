@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.brianku.qbchat.R
 import com.brianku.qbchat.landing_screen.user_login.user_login.LoginScreenActivity
-import com.quickblox.auth.session.QBSessionManager
 import com.quickblox.chat.QBChatService
 import com.quickblox.core.QBEntityCallback
 import com.quickblox.core.exception.QBResponseException
@@ -74,7 +73,6 @@ class MainSectionActivity : AppCompatActivity() {
                     }
                     Toast.makeText(this@MainSectionActivity,"Sign out successfully",Toast.LENGTH_LONG).show()
                     backToLoginActivity()
-
                 }
 
                 override fun onError(e: QBResponseException?) {

@@ -14,7 +14,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 
 import com.brianku.qbchat.R
-import com.brianku.qbchat.chat_and_video_calling.ChatAndVideoCallingActivity
+import com.brianku.qbchat.chat_and_video_calling.ChatRoomActivity
 import com.brianku.qbchat.groupie_item.HistoryDialogItem
 import com.brianku.qbchat.groupie_item.OnlineUserItem
 import com.quickblox.auth.session.QBSettings
@@ -35,12 +35,14 @@ class InboxFragment : Fragment() {
 
     companion object {
         var currentUser:QBUser? = null
+        var opponents:ArrayList<QBUser>? = null
     }
 
     private var onlineUserGroupAdapter: GroupAdapter<ViewHolder>? = null
     private  var historyDialogGroupAdapter: GroupAdapter<ViewHolder>? = null
     private lateinit var inboxProgressBar: ProgressBar
     private val qbChatService: QBChatService = QBChatService.getInstance()
+
 
     private val isLoggedIn: Boolean
         get() = QBChatService.getInstance().isLoggedIn
@@ -141,8 +143,10 @@ class InboxFragment : Fragment() {
     private fun loadUsers(){
             QBUsers.getUsers(null).performAsync(object : QBEntityCallback<ArrayList<QBUser>> {
                 override fun onSuccess(qbUsers: ArrayList<QBUser>, p1: Bundle?) {
-                   progressBar(false)
-                   qbUsers.forEach{
+                    progressBar(false)
+                    // save all users to opponents
+                    opponents = qbUsers
+                    qbUsers.forEach{
                        if (it.id != currentUser?.id){
                            onlineUserGroupAdapter?.add(OnlineUserItem(it))
                        }}
@@ -169,7 +173,7 @@ class InboxFragment : Fragment() {
                 item, view ->
 
             val user = (item as OnlineUserItem).item
-            val intent = Intent(activity,ChatAndVideoCallingActivity::class.java)
+            val intent = Intent(activity,ChatRoomActivity::class.java)
             intent.putExtra("user",user)
             intent.putExtra("title",user.fullName)
             startActivity(intent)
@@ -182,14 +186,15 @@ class InboxFragment : Fragment() {
                 item, view ->
 
             val dialog = ( item as HistoryDialogItem).item
-            val intent = Intent(activity,ChatAndVideoCallingActivity::class.java)
+            val intent = Intent(activity,ChatRoomActivity::class.java)
+            val opponentFromDialog = opponents?.filter { dialog.recipientId == it.id }!![0]
             intent.putExtra("dialog",dialog)
+            intent.putExtra("opponentFromDialog",opponentFromDialog)
             intent.putExtra("title",dialog.name)
             startActivity(intent)
             clearGroupAdapter()
         }
     }
-
 
     private fun clearGroupAdapter(){
         onlineUserGroupAdapter = null

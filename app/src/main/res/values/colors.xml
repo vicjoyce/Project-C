@@ -8,6 +8,21 @@
     <color name="myGolden">#FDAE45</color>
     <color name="myBlack">#4E545E</color>
 
+<!--*************  from QB sample code  **************-->
+    <color name="color_blue_qb">#046ad0</color>
+    <color name="color_light_blue_qb">#87cefa</color>
+    <color name="color_green_qb">#4ad24d</color>
+    <color name="background_app_color">#ffffff</color>
+    <color name="color_blue_accent">#0088e7</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#45D100</color>
+    <color name="white_green">#A9FF80</color>
+    <color name="black_transparent_50">#50000000</color>
+    <color name="grey_transparent_50">#50606060</color>
+    <color name="button_end_call_pressed_color">#FC5876</color>
+    <color name="background_fragment_conversation">#2b2a2a</color>
+    <color name="text_color_call_type">#6e6e6e</color>
+
 
     <color name="red_50">#FFEBEE</color>
     <color name="red_100">#FFCDD2</color>

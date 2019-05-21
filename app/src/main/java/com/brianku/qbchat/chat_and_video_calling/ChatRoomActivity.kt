@@ -3,7 +3,6 @@ package com.brianku.qbchat.chat_and_video_calling
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
@@ -12,16 +11,13 @@ import com.brianku.qbchat.R
 import com.brianku.qbchat.extension.hideKeyboard
 import com.brianku.qbchat.groupie_item.ChatFromItem
 import com.brianku.qbchat.groupie_item.ChatToItem
-import com.brianku.qbchat.landing_screen.user_login.user_login.LoginScreenActivity
 import com.brianku.qbchat.main_section.InboxFragment
 import com.quickblox.chat.QBChatService
-import com.quickblox.chat.QBIncomingMessagesManager
 import com.quickblox.chat.QBRestChatService
 import com.quickblox.chat.exception.QBChatException
 import com.quickblox.chat.listeners.QBChatDialogMessageListener
 import com.quickblox.chat.model.QBChatDialog
 import com.quickblox.chat.model.QBChatMessage
-import com.quickblox.chat.model.QBDialogType
 import com.quickblox.chat.request.QBMessageGetBuilder
 import com.quickblox.chat.utils.DialogUtils
 import com.quickblox.core.QBEntityCallback
@@ -30,14 +26,16 @@ import com.quickblox.users.QBUsers
 import com.quickblox.users.model.QBUser
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_chat_and_video_calling.*
+import kotlinx.android.synthetic.main.activity_chatroom.*
 import org.jivesoftware.smack.SmackException
-import java.util.zip.Inflater
 
-class ChatAndVideoCallingActivity : AppCompatActivity() {
+class ChatRoomActivity : AppCompatActivity() {
 
     // opponent is 1:1 user we message or video calling to him/her
     private var opponent :QBUser? = null
+
+    // opponentFromDialog is a QBUser or QBUsers accompany with dialog, it will be sent to Calling activity if opponent is null.
+    private var opponentFromDialog:QBUser? = null
 
     // mainDialog is chat-room alike data model, it handles message send and retrieve from QBChat Server, it also could display user is typing status
     private var mainDialog:QBChatDialog? = null
@@ -46,10 +44,11 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat_and_video_calling)
+        setContentView(R.layout.activity_chatroom)
 
         opponent = intent.getSerializableExtra("user") as? QBUser
         mainDialog = intent.getSerializableExtra("dialog") as? QBChatDialog
+        opponentFromDialog = intent.getSerializableExtra("opponentFromDialog") as? QBUser
         val title = intent.getStringExtra("title")
         supportActionBar?.title = title
 
@@ -77,7 +76,7 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
 
         QBRestChatService.createChatDialog(dialog).performAsync(object :QBEntityCallback<QBChatDialog>{
             override fun onSuccess(chatDialog: QBChatDialog?, p1: Bundle?) {
-                Toast.makeText(this@ChatAndVideoCallingActivity,"create dialog successfully",Toast.LENGTH_LONG).show()
+                Toast.makeText(this@ChatRoomActivity,"create dialog successfully",Toast.LENGTH_LONG).show()
                 mainDialog = chatDialog
                 mainDialog?.let{
                     // when main dialog is created, we start to initialize main dialog(chat room)
@@ -85,7 +84,7 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
                 }
             }
             override fun onError(p0: QBResponseException?) {
-                Toast.makeText(this@ChatAndVideoCallingActivity,"create dialog failed",Toast.LENGTH_LONG).show()
+                Toast.makeText(this@ChatRoomActivity,"create dialog failed",Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -173,6 +172,15 @@ class ChatAndVideoCallingActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == R.id.video_calling) {
+            var intent = Intent(this,VideoCallingActivity::class.java)
+            if(opponent != null){
+               intent.putExtra("callingReceiver",opponent)
+          }else{
+                intent.putExtra("callingReceiver",opponentFromDialog)
+            }
+            startActivity(intent)
+        }
         return super.onOptionsItemSelected(item)
     }
 
