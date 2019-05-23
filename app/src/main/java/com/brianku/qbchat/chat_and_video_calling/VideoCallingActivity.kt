@@ -23,6 +23,7 @@ import com.brianku.qbchat.VideoFragments.VideoConversationFragment
 import com.brianku.qbchat.utils.addFragment
 import com.brianku.qbchat.utils.addFragmentWithBackStack
 import com.brianku.qbchat.utils.popBackStackFragment
+import com.quickblox.auth.session.QBSettings
 import com.quickblox.chat.QBChatService
 import com.quickblox.chat.QBWebRTCSignaling
 
@@ -96,6 +97,7 @@ class VideoCallingActivity : AppCompatActivity(),QBRTCClientSessionCallbacks,QBR
         opponent = intent.getSerializableExtra("callingReceiver") as QBUser
         initQBRTCClient()
         checkCameraPermissionAndStart()
+        Log.d(TAG,"Video is complete initialized")
 
     }
 
@@ -262,14 +264,16 @@ class VideoCallingActivity : AppCompatActivity(),QBRTCClientSessionCallbacks,QBR
     //***********************************************************************************************************
     override fun onStartCall(session: QBRTCSession) {
         Log.d(TAG, "onStartCall = $session")
+
         initCurrentSession(session)
-        startAudioManager()
-        initConversationFragment(false)
+//        startAudioManager()
+
+       initConversationFragment(false)
     }
 
     override fun onAcceptCall() {
         Log.d(TAG, "onAcceptCall")
-        startAudioManager()
+//        startAudioManager()
         initConversationFragment(true)
     }
 
@@ -390,11 +394,11 @@ class VideoCallingActivity : AppCompatActivity(),QBRTCClientSessionCallbacks,QBR
 
             audioManager!!.defaultAudioDevice = AppRTCAudioManager.AudioDevice.SPEAKER_PHONE
             Log.d("vic", "AppRTCAudioManager.AudioDevice.SPEAKER_PHONE")
-
             audioManager!!.setOnWiredHeadsetStateListener { plugged, hasMicrophone ->
                 Log.d("vic", "setOnWiredHeadsetStateListener plugged= $plugged")
             }
         }
+
     }
 
     private fun startAudioManager() {

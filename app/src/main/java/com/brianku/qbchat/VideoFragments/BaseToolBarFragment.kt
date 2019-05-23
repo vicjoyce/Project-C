@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -19,7 +20,7 @@ import com.quickblox.chat.QBChatService
 import java.lang.ref.WeakReference
 
 abstract class BaseToolBarFragment : Fragment() {
-    private var TAG = BaseToolBarFragment::class.java.simpleName
+    private var TAG = "BaseToolBar"
     lateinit var mainHandler: Handler
     lateinit var actionBar: ActionBar
 
@@ -35,6 +36,7 @@ abstract class BaseToolBarFragment : Fragment() {
         val view = inflater.inflate(fragmentLayout, container, false)
         actionBar = (activity as AppCompatActivity).delegate.supportActionBar!!
         initActionBar()
+
         return view
     }
 
